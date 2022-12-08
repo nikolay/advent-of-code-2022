@@ -29,22 +29,22 @@ func main() {
 		if len(matches) == 0 {
 			log.Fatalf("invalid command: %v", line)
 		}
-		f1, _ := strconv.Atoi(matches[1])
-		t1, _ := strconv.Atoi(matches[2])
-		f2, _ := strconv.Atoi(matches[3])
-		t2, _ := strconv.Atoi(matches[4])
-		var f, t int
-		if f1 > f2 {
-			f = f1
+		from1, _ := strconv.Atoi(matches[1])
+		to1, _ := strconv.Atoi(matches[2])
+		from2, _ := strconv.Atoi(matches[3])
+		to2, _ := strconv.Atoi(matches[4])
+		var from, to int
+		if from1 > from2 {
+			from = from1
 		} else {
-			f = f2
+			from = from2
 		}
-		if t1 < t2 {
-			t = t1
+		if to1 < to2 {
+			to = to1
 		} else {
-			t = t2
+			to = to2
 		}
-		if f <= t {
+		if from <= to {
 			count++
 		}
 	}
