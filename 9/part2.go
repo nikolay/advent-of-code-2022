@@ -27,11 +27,11 @@ func part2() {
 			continue
 		}
 		fields := strings.Fields(line)
-		delta := DirDelta(fields[0])
+		delta := DirPosition(fields[0])
 		for steps, _ := strconv.Atoi(fields[1]); steps > 0; steps-- {
-			ropes[0] = ropes[0].Move(delta.x, delta.y)
+			ropes[0] = ropes[0].Add(delta)
 			for r := 1; r < TailSize; r++ {
-				dist := ropes[r-1].Distance(ropes[r])
+				dist := ropes[r-1].Subtract(ropes[r])
 				if Abs(dist.x) > 1 || Abs(dist.y) > 1 {
 					ropes[r] = ropes[r].Move(Sign(dist.x), Sign(dist.y))
 					if r == TailSize-1 {

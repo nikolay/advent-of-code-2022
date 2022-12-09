@@ -26,10 +26,10 @@ func part1() {
 			continue
 		}
 		fields := strings.Fields(line)
-		delta := DirDelta(fields[0])
+		delta := DirPosition(fields[0])
 		for steps, _ := strconv.Atoi(fields[1]); steps > 0; steps-- {
-			head = head.Move(delta.x, delta.y)
-			dist := head.Distance(tail)
+			head = head.Add(delta)
+			dist := head.Subtract(tail)
 			if Abs(dist.x) > 1 || Abs(dist.y) > 1 {
 				tail = tail.Move(Sign(dist.x), Sign(dist.y))
 				positions[fmt.Sprintf("%v,%v", tail.x, tail.y)] = true

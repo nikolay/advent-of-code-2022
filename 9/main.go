@@ -8,7 +8,11 @@ func (pos Position) Move(dx, dy int) Position {
 	return Position{pos.x + dx, pos.y + dy}
 }
 
-func (pos Position) Distance(p Position) Position {
+func (pos Position) Add(p Position) Position {
+	return Position{pos.x + p.x, pos.y + p.y}
+}
+
+func (pos Position) Subtract(p Position) Position {
 	return Position{pos.x - p.x, pos.y - p.y}
 }
 
@@ -29,7 +33,7 @@ func Sign(x int) int {
 	return 0
 }
 
-func DirDelta(dir string) Position {
+func DirPosition(dir string) Position {
 	switch dir {
 	case "L":
 		return Position{-1, 0}
