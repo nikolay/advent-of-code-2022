@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func main() {
+func part1() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -18,12 +18,12 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	calories := int64(0)
-	max_calories := calories
+	maxCalories := calories
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
-			if calories > max_calories {
-				max_calories = calories
+			if calories > maxCalories {
+				maxCalories = calories
 			}
 			calories = 0
 			continue
@@ -37,8 +37,8 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	if calories > max_calories {
-		max_calories = calories
+	if calories > maxCalories {
+		maxCalories = calories
 	}
-	fmt.Println(max_calories)
+	fmt.Println(maxCalories)
 }

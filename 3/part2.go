@@ -8,14 +8,12 @@ import (
 	"strings"
 )
 
-const (
-	GROUPS    = 3
-	FULL_MASK = 1<<GROUPS - 1
-	LETTERS   = 26
-	SYMBOLS   = 2 * LETTERS
-)
+func part2() {
+	const (
+		Groups   = 3
+		FullMask = 1<<Groups - 1
+	)
 
-func main() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -23,7 +21,7 @@ func main() {
 	defer file.Close()
 
 	score := uint64(0)
-	bits := [SYMBOLS]byte{}
+	bits := [Symbols]byte{}
 	elf := uint(0)
 
 	scanner := bufio.NewScanner(file)
@@ -39,20 +37,20 @@ func main() {
 			if c >= 'a' && c <= 'z' {
 				code = uint(c - 'a')
 			} else if c >= 'A' && c <= 'Z' {
-				code = LETTERS + uint(c-'A')
+				code = Letters + uint(c-'A')
 			} else {
 				log.Fatalf("invalid character: '%c'", c)
 			}
 			bits[code] |= bit
-			if bits[code] == FULL_MASK {
+			if bits[code] == FullMask {
 				score += 1 + uint64(code)
 				break
 			}
 		}
 		elf++
-		if elf == GROUPS {
+		if elf == Groups {
 			elf = 0
-			bits = [SYMBOLS]byte{}
+			bits = [Symbols]byte{}
 		}
 	}
 	if err := scanner.Err(); err != nil {

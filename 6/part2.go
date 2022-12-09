@@ -8,9 +8,9 @@ import (
 	"strings"
 )
 
-const STREAK_SIZE = 14
+func part2() {
+	const StreakSize = 14
 
-func main() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -23,16 +23,16 @@ func main() {
 		if len(line) == 0 {
 			continue
 		}
-		outer:
-		for i := 0; i < len(line)-STREAK_SIZE; i++ {
-			for j := i; j < i+STREAK_SIZE-1; j++ {
-				for k := j + 1; k < i+STREAK_SIZE; k++ {
+	outer:
+		for i := 0; i < len(line)-StreakSize; i++ {
+			for j := i; j < i+StreakSize-1; j++ {
+				for k := j + 1; k < i+StreakSize; k++ {
 					if line[j] == line[k] {
 						continue outer
 					}
 				}
 			}
-			fmt.Println(i + STREAK_SIZE)
+			fmt.Println(i + StreakSize)
 			break
 		}
 	}

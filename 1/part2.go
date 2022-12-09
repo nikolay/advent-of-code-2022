@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func main() {
+func part2() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -18,21 +18,21 @@ func main() {
 
 	scanner := bufio.NewScanner(file)
 	calories := int64(0)
-	max_calories_1 := calories
-	max_calories_2 := calories
-	max_calories_3 := calories
+	maxCalories1 := calories
+	maxCalories2 := calories
+	maxCalories3 := calories
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
-			if calories > max_calories_1 {
-				max_calories_3 = max_calories_2
-				max_calories_2 = max_calories_1
-				max_calories_1 = calories
-			} else if calories > max_calories_2 {
-				max_calories_3 = max_calories_2
-				max_calories_2 = calories
-			} else if calories > max_calories_3 {
-				max_calories_3 = calories
+			if calories > maxCalories1 {
+				maxCalories3 = maxCalories2
+				maxCalories2 = maxCalories1
+				maxCalories1 = calories
+			} else if calories > maxCalories2 {
+				maxCalories3 = maxCalories2
+				maxCalories2 = calories
+			} else if calories > maxCalories3 {
+				maxCalories3 = calories
 			}
 			calories = 0
 			continue
@@ -46,15 +46,15 @@ func main() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	if calories > max_calories_1 {
-		max_calories_3 = max_calories_2
-		max_calories_2 = max_calories_1
-		max_calories_1 = calories
-	} else if calories > max_calories_2 {
-		max_calories_3 = max_calories_2
-		max_calories_2 = calories
-	} else if calories > max_calories_3 {
-		max_calories_3 = calories
+	if calories > maxCalories1 {
+		maxCalories3 = maxCalories2
+		maxCalories2 = maxCalories1
+		maxCalories1 = calories
+	} else if calories > maxCalories2 {
+		maxCalories3 = maxCalories2
+		maxCalories2 = calories
+	} else if calories > maxCalories3 {
+		maxCalories3 = calories
 	}
-	fmt.Println(max_calories_1 + max_calories_2 + max_calories_3)
+	fmt.Println(maxCalories1 + maxCalories2 + maxCalories3)
 }

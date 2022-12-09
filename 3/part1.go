@@ -8,13 +8,9 @@ import (
 	"strings"
 )
 
-const (
-	FULL_MASK = 1<<2 - 1
-	LETTERS   = 26
-	SYMBOLS   = 2 * LETTERS
-)
+func part1() {
+	const FullMask = 1<<2 - 1
 
-func main() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
@@ -30,7 +26,7 @@ func main() {
 			continue
 		}
 		h := l / 2
-		bits := [SYMBOLS]byte{}
+		bits := [Symbols]byte{}
 		bit := byte(1)
 		for i := 0; i < l; i++ {
 			if i == h {
@@ -41,12 +37,12 @@ func main() {
 			if c >= 'a' && c <= 'z' {
 				code = uint(c - 'a')
 			} else if c >= 'A' && c <= 'Z' {
-				code = LETTERS + uint(c-'A')
+				code = Letters + uint(c-'A')
 			} else {
 				log.Fatalf("invalid character: '%c'", c)
 			}
 			bits[code] |= bit
-			if bits[code] == FULL_MASK {
+			if bits[code] == FullMask {
 				score += 1 + uint64(code)
 				break
 			}
