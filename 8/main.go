@@ -30,6 +30,10 @@ func main() {
 		}
 		rows = append(rows, row)
 	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
 	height, width := len(rows), len(rows[0])
 	solution1 := 2 * (width + (height - 2))
 	solution2 := 0
@@ -76,9 +80,6 @@ func main() {
 				solution2 = score
 			}
 		}
-	}
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
 	}
 	fmt.Println(solution1)
 	fmt.Println(solution2)
