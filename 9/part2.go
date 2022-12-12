@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func part2() {
+func Part2() {
 	const TailSize = 10
 
 	file, err := os.Open("input.txt")

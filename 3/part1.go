@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func part1() {
+func Part1() {
 	const FullMask = 1<<2 - 1
 
 	file, err := os.Open("input.txt")

@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func part2() {
+func Part2() {
 	const (
 		Groups   = 3
 		FullMask = 1<<Groups - 1

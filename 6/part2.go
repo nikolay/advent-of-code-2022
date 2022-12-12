@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func part2() {
+func Part2() {
 	const StreakSize = 14
 
 	file, err := os.Open("input.txt")

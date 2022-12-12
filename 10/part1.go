@@ -16,7 +16,7 @@ func Check(cycle *int, x int, sum *int) {
 	*cycle++
 }
 
-func part1() {
+func Part1() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)

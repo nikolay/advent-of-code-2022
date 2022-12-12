@@ -10,7 +10,7 @@ import (
 	"strings"
 )
 
-func part1() {
+func Part1() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)

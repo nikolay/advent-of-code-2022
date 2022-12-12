@@ -20,7 +20,7 @@ func Draw(screen *Screen, cycle *int, x int) {
 	*cycle++
 }
 
-func part2() {
+func Part2() {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
