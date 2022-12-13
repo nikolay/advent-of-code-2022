@@ -25,14 +25,14 @@ func Parse(line string, startPos int) (Item, int, error) {
 		for line[pos] != ']' {
 			item, newPos, err := Parse(line, pos)
 			if err != nil {
-				return Item{}, -1, err
+				return Item{}, 0, err
 			}
 			result.list = append(result.list, item)
 			pos = newPos
 			if ch := line[pos]; ch == ',' {
 				pos++
 			} else if ch != ']' {
-				return Item{}, -1, fmt.Errorf("invalid command: %v", line)
+				return Item{}, 0, fmt.Errorf("invalid command: %v", line)
 			}
 		}
 		return result, pos + 1, nil
@@ -43,7 +43,7 @@ func Parse(line string, startPos int) (Item, int, error) {
 	}
 	var err error
 	if result.value, err = strconv.Atoi(line[startPos:pos]); err != nil {
-		return Item{}, -1, err
+		return Item{}, 0, err
 	}
 	return result, pos, nil
 }
@@ -111,23 +111,21 @@ func main() {
 	fmt.Println(sum)
 
 	// Part 2
-	for _, v := range []int{2, 6} {
-		items = append(items, Item{isDivider: true, list: []Item{Item{list: []Item{Item{hasValue: true, value: v}}}}})
+	divisors, indices := []Item{}, []int{}
+	for index, v := range []int{2, 6} {
+		divisors = append(divisors, Item{isDivider: true, list: []Item{Item{list: []Item{Item{hasValue: true, value: v}}}}})
+		indices = append(indices, index)
 	}
-	for i := 0; i < len(items)-1; i++ {
-		for j := i + 1; j < len(items); j++ {
-			if Compare(items[i], items[j]) > 0 {
-				temp := items[i]
-				items[i] = items[j]
-				items[j] = temp
+	for _, item := range items {
+		for index, divisor := range divisors {
+			if Compare(item, divisor) < 0 {
+				indices[index]++
 			}
 		}
 	}
 	product := 1
-	for index, item := range items {
-		if item.isDivider {
-			product *= index + 1
-		}
+	for _, index := range indices {
+		product *= index + 1
 	}
 	fmt.Println(product)
 }
