@@ -12,6 +12,16 @@ type Coord struct {
 	row, col int
 }
 
+func Height(ch byte) int {
+	switch ch {
+	case 'S':
+		ch = 'a'
+	case 'E':
+		ch = 'z'
+	}
+	return int(ch) - int('a')
+}
+
 func Wave(rows []string, starts []Coord, end Coord) int {
 	moves := []Coord{
 		Coord{-1, 0},
@@ -19,8 +29,7 @@ func Wave(rows []string, starts []Coord, end Coord) int {
 		Coord{+1, 0},
 		Coord{0, -1},
 	}
-	height := len(rows)
-	width := len(rows[0])
+	height, width := len(rows), len(rows[0])
 	wave := [][]int{}
 	for row := 0; row < height; row++ {
 		r := make([]int, width)
@@ -34,32 +43,25 @@ func Wave(rows []string, starts []Coord, end Coord) int {
 		wave[s.row][s.col] = step
 	}
 	for {
-		any := false
+		found := false
 		for row := 0; row < height; row++ {
 			for col := 0; col < width; col++ {
-				letter := rows[row][col]
-				if letter == 'S' {
-					letter = 'a'
-				}
+				h := Height(rows[row][col])
 				if wave[row][col] == step {
-					for move := 0; move < len(moves); move++ {
-						r := row + moves[move].row
-						c := col + moves[move].col
+					for _, move := range moves {
+						r := row + move.row
+						c := col + move.col
 						if r >= 0 && r < height && c >= 0 && c < width && wave[r][c] == -1 {
-							l := rows[r][c]
-							if l == 'E' {
-								l = 'z'
-							}
-							if l <= letter+1 {
+							if Height(rows[r][c]) <= h+1 {
 								wave[r][c] = step + 1
-								any = true
+								found = true
 							}
 						}
 					}
 				}
 			}
 		}
-		if !any {
+		if !found {
 			break
 		}
 		if finish := wave[end.row][end.col]; finish >= 0 {
