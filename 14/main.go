@@ -10,18 +10,20 @@ import (
 )
 
 type Coord struct {
-	x, y int
+	x, y int32
 }
 
-func (coord Coord) GetKey() string {
-	return fmt.Sprintf("%v,%v", coord.x, coord.y)
+type Key uint64
+
+func (coord Coord) GetKey() Key {
+	return Key(uint64(coord.y)<<32 | uint64(coord.x))
 }
 
 func (coord Coord) Add(add Coord) Coord {
 	return Coord{coord.x + add.x, coord.y + add.y}
 }
 
-func Sign(n int) int {
+func Sign(n int32) int32 {
 	if n < 0 {
 		return -1
 	}
@@ -35,49 +37,68 @@ func (coord Coord) Step(dest Coord) Coord {
 	return Coord{coord.x + Sign(dest.x-coord.x), coord.y + Sign(dest.y-coord.y)}
 }
 
-type Space map[string]byte
+type Content byte
 
-func (space Space) Get(coord Coord) byte {
+const (
+	EMPTY Content = '.'
+	ROCK          = '#'
+	SAND          = 'o'
+)
+
+type Space map[Key]Content
+
+func (space Space) Get(coord Coord) Content {
 	if v, ok := space[coord.GetKey()]; ok {
 		return v
 	}
-	return '.'
+	return EMPTY
 }
 
-func (space Space) Put(coord Coord, ch byte) {
-	space[coord.GetKey()] = ch
+func (space Space) Put(coord Coord, content Content) {
+	space[coord.GetKey()] = content
 }
 
-func Drop(space *Space, drop Coord, abyss int) bool {
+type DropResult uint
+
+const (
+	BLOCKED DropResult = iota
+	ABYSS
+	LANDED
+)
+
+func Drop(space *Space, drop Coord, abyss, floor int32) DropResult {
 	moves := []Coord{
 		Coord{0, +1},
 		Coord{-1, +1},
 		Coord{+1, +1},
 	}
+
 	pos := drop
 outer:
-	for pos.y < abyss {
-		if space.Get(pos) != '.' {
-			break
-		}
-
+	for {
 		for _, move := range moves {
 			newPos := pos.Add(move)
-			if space.Get(newPos) == '.' {
+			if (floor == 0 || newPos.y < floor) && space.Get(newPos) == EMPTY {
+				if abyss != 0 && newPos.y >= abyss {
+					return ABYSS
+				}
 				pos = newPos
 				continue outer
 			}
 		}
 
-		space.Put(pos, 'o')
-		return true
+		if space.Get(pos) != EMPTY {
+			return BLOCKED
+		}
+
+		space.Put(pos, SAND)
+		return LANDED
 	}
-	return false
 }
 
 type Input struct {
 	paths [][]Coord
-	maxY  int
+	maxY  int32
 	drop  Coord
 }
 
@@ -91,10 +112,10 @@ func (input *Input) GetSpace() (result Space) {
 				continue
 			}
 			for pos != segment {
-				result.Put(pos, '#')
+				result.Put(pos, ROCK)
 				pos = pos.Step(segment)
 			}
-			result.Put(pos, '#')
+			result.Put(pos, ROCK)
 		}
 	}
 	return
@@ -117,12 +138,13 @@ func GetInput(filename string) (result Input) {
 		path := []Coord{}
 		for _, frag := range segments {
 			coords := strings.Split(frag, ",")
-			x, _ := strconv.Atoi(strings.TrimSpace(coords[0]))
-			y, _ := strconv.Atoi(strings.TrimSpace(coords[1]))
-			if y > result.maxY {
-				result.maxY = y
+			x, _ := strconv.ParseInt(strings.TrimSpace(coords[0]), 10, 32)
+			y, _ := strconv.ParseInt(strings.TrimSpace(coords[1]), 10, 32)
+			coord := Coord{int32(x), int32(y)}
+			if coord.y > result.maxY {
+				result.maxY = coord.y
 			}
-			path = append(path, Coord{x, y})
+			path = append(path, coord)
 		}
 		result.paths = append(result.paths, path)
 	}
