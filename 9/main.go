@@ -16,18 +16,18 @@ func (pos Position) Subtract(p Position) Position {
 	return Position{pos.x - p.x, pos.y - p.y}
 }
 
-func Abs(x int) int {
-	if x < 0 {
-		return -x
+func Abs(n int) int {
+	if n < 0 {
+		return -n
 	}
-	return x
+	return n
 }
 
-func Sign(x int) int {
-	if x < 0 {
+func Sign(n int) int {
+	if n < 0 {
 		return -1
 	}
-	if x > 0 {
+	if n > 0 {
 		return +1
 	}
 	return 0

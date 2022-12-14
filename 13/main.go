@@ -16,6 +16,16 @@ type Item struct {
 	isDivider bool
 }
 
+func Sign(n int) int {
+	if n < 0 {
+		return -1
+	}
+	if n > 0 {
+		return +1
+	}
+	return 0
+}
+
 func Parse(line string, startPos int) (Item, int, error) {
 	pos := startPos
 	if line[pos] == '[' {
@@ -46,16 +56,6 @@ func Parse(line string, startPos int) (Item, int, error) {
 		return Item{}, 0, err
 	}
 	return result, pos, nil
-}
-
-func Sign(v int) int {
-	if v < 0 {
-		return -1
-	}
-	if v > 0 {
-		return +1
-	}
-	return 0
 }
 
 func Compare(left, right Item) int {
@@ -113,7 +113,7 @@ func main() {
 	// Part 2
 	divisors, indices := []Item{}, []int{}
 	for index, v := range []int{2, 6} {
-		divisors = append(divisors, Item{isDivider: true, list: []Item{Item{list: []Item{Item{hasValue: true, value: v}}}}})
+		divisors = append(divisors, Item{isDivider: true, list: []Item{{list: []Item{{hasValue: true, value: v}}}}})
 		indices = append(indices, index)
 	}
 	for _, item := range items {

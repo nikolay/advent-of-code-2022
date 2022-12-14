@@ -68,9 +68,9 @@ const (
 
 func Drop(space *Space, drop Coord, abyss, floor int32) DropResult {
 	moves := []Coord{
-		Coord{0, +1},
-		Coord{-1, +1},
-		Coord{+1, +1},
+		{0, +1},
+		{-1, +1},
+		{+1, +1},
 	}
 
 	pos := drop

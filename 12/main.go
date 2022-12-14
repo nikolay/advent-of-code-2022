@@ -24,10 +24,10 @@ func Height(ch byte) int {
 
 func Wave(rows []string, starts []Coord, end Coord) int {
 	moves := []Coord{
-		Coord{-1, 0},
-		Coord{0, +1},
-		Coord{+1, 0},
-		Coord{0, -1},
+		{-1, 0},
+		{0, +1},
+		{+1, 0},
+		{0, -1},
 	}
 	height, width := len(rows), len(rows[0])
 	wave := [][]int{}
