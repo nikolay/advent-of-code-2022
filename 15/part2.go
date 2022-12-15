@@ -10,24 +10,18 @@ import (
 	"strings"
 )
 
-func Diamond(center Coord, size int) (result []Coord) {
-	turns := []struct{ sin, cos int }{
-		{0, 1},
-		{1, 0},
-		{0, -1},
-		{-1, 0},
-	}
-	result = []Coord{}
-	for _, turn := range turns {
-		for dx := 0; dx <= size; dx++ {
-			dy := size - dx
-			result = append(result, Coord{
-				center.x + dx*turn.cos - dy*turn.sin,
-				center.y + dx*turn.sin + dy*turn.cos,
-			})
+func Diamond(center Coord, size int) []Coord {
+	dirs := []Coord{{1, 1}, {-1, 1}, {-1, -1}, {1, -1}}
+	i, result := 0, make([]Coord, size*len(dirs))
+	pixel := Coord{center.x, center.y - size}
+	for _, dir := range dirs {
+		for n := size; n > 0; n-- {
+			result[i] = pixel
+			i++
+			pixel = pixel.Add(dir)
 		}
 	}
-	return
+	return result
 }
 
 func Part2() {

@@ -11,6 +11,10 @@ func Abs(n int) int {
 	return n
 }
 
+func (coord Coord) Add(add Coord) Coord {
+	return Coord{coord.x + add.x, coord.y + add.y}
+}
+
 func (coord Coord) Distance(dest Coord) int {
 	return Abs(coord.x-dest.x) + Abs(coord.y-dest.y)
 }
