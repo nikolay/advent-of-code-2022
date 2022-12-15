@@ -1,19 +1,19 @@
 package main
 
-type Position struct {
+type Coord struct {
 	x, y int
 }
 
-func (pos Position) Move(dx, dy int) Position {
-	return Position{pos.x + dx, pos.y + dy}
+func (coord Coord) Move(dx, dy int) Coord {
+	return Coord{coord.x + dx, coord.y + dy}
 }
 
-func (pos Position) Add(p Position) Position {
-	return Position{pos.x + p.x, pos.y + p.y}
+func (coord Coord) Add(add Coord) Coord {
+	return Coord{coord.x + add.x, coord.y + add.y}
 }
 
-func (pos Position) Subtract(p Position) Position {
-	return Position{pos.x - p.x, pos.y - p.y}
+func (coord Coord) Subtract(subtract Coord) Coord {
+	return Coord{coord.x - subtract.x, coord.y - subtract.y}
 }
 
 func Abs(n int) int {
@@ -33,18 +33,18 @@ func Sign(n int) int {
 	return 0
 }
 
-func DirPosition(dir string) Position {
+func ParseDirection(dir string) Coord {
 	switch dir {
 	case "L":
-		return Position{-1, 0}
+		return Coord{-1, 0}
 	case "R":
-		return Position{+1, 0}
+		return Coord{+1, 0}
 	case "U":
-		return Position{0, -1}
+		return Coord{0, -1}
 	case "D":
-		return Position{0, +1}
+		return Coord{0, +1}
 	}
-	return Position{0, 0}
+	return Coord{0, 0}
 }
 
 func main() {

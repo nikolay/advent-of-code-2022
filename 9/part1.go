@@ -17,7 +17,7 @@ func Part1() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	head := Position{0, 0}
+	head := Coord{0, 0}
 	tail := head
 	positions := map[string]bool{}
 	for scanner.Scan() {
@@ -26,7 +26,7 @@ func Part1() {
 			continue
 		}
 		fields := strings.Fields(line)
-		delta := DirPosition(fields[0])
+		delta := ParseDirection(fields[0])
 		for steps, _ := strconv.Atoi(fields[1]); steps > 0; steps-- {
 			head = head.Add(delta)
 			dist := head.Subtract(tail)

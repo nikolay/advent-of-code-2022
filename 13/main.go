@@ -9,10 +9,10 @@ import (
 	"strings"
 )
 
-type Item struct {
+type Node struct {
 	hasValue  bool
 	value     int
-	list      []Item
+	list      []Node
 	isDivider bool
 }
 
@@ -26,47 +26,47 @@ func Sign(n int) int {
 	return 0
 }
 
-func Parse(line string, startPos int) (Item, int, error) {
+func Parse(line string, startPos int) (Node, int, error) {
 	pos := startPos
 	if line[pos] == '[' {
 		pos++
-		result := Item{}
-		result.list = []Item{}
+		result := Node{}
+		result.list = []Node{}
 		for line[pos] != ']' {
-			item, newPos, err := Parse(line, pos)
+			node, newPos, err := Parse(line, pos)
 			if err != nil {
-				return Item{}, 0, err
+				return Node{}, 0, err
 			}
-			result.list = append(result.list, item)
+			result.list = append(result.list, node)
 			pos = newPos
 			if ch := line[pos]; ch == ',' {
 				pos++
 			} else if ch != ']' {
-				return Item{}, 0, fmt.Errorf("invalid command: %v", line)
+				return Node{}, 0, fmt.Errorf("invalid command: %v", line)
 			}
 		}
 		return result, pos + 1, nil
 	}
-	result := Item{hasValue: true}
+	result := Node{hasValue: true}
 	for line[pos] >= '0' && line[pos] <= '9' {
 		pos++
 	}
 	var err error
 	if result.value, err = strconv.Atoi(line[startPos:pos]); err != nil {
-		return Item{}, 0, err
+		return Node{}, 0, err
 	}
 	return result, pos, nil
 }
 
-func Compare(left, right Item) int {
+func Compare(left, right Node) int {
 	if left.hasValue {
 		if right.hasValue {
 			return Sign(left.value - right.value)
 		}
-		return Compare(Item{list: []Item{left}}, right)
+		return Compare(Node{list: []Node{left}}, right)
 	}
 	if right.hasValue {
-		return Compare(left, Item{list: []Item{right}})
+		return Compare(left, Node{list: []Node{right}})
 	}
 	l, r := len(left.list), len(right.list)
 	for i := 0; i < l && i < r; i++ {
@@ -85,16 +85,16 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	items := []Item{}
+	nodes := []Node{}
 	for row := 0; scanner.Scan(); row++ {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
 			continue
 		}
-		if item, _, err := Parse(line, 0); err != nil {
+		if node, _, err := Parse(line, 0); err != nil {
 			log.Fatal(err)
 		} else {
-			items = append(items, item)
+			nodes = append(nodes, node)
 		}
 	}
 	if err := scanner.Err(); err != nil {
@@ -103,22 +103,22 @@ func main() {
 
 	// Part 1
 	sum := 0
-	for i := 0; i < len(items); i += 2 {
-		if Compare(items[i], items[i+1]) < 0 {
+	for i := 0; i < len(nodes); i += 2 {
+		if Compare(nodes[i], nodes[i+1]) < 0 {
 			sum += i/2 + 1
 		}
 	}
 	fmt.Println(sum)
 
 	// Part 2
-	divisors, indices := []Item{}, []int{}
+	divisors, indices := []Node{}, []int{}
 	for index, v := range []int{2, 6} {
-		divisors = append(divisors, Item{isDivider: true, list: []Item{{list: []Item{{hasValue: true, value: v}}}}})
+		divisors = append(divisors, Node{isDivider: true, list: []Node{{list: []Node{{hasValue: true, value: v}}}}})
 		indices = append(indices, index)
 	}
-	for _, item := range items {
+	for _, node := range nodes {
 		for index, divisor := range divisors {
-			if Compare(item, divisor) < 0 {
+			if Compare(node, divisor) < 0 {
 				indices[index]++
 			}
 		}

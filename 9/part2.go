@@ -19,7 +19,7 @@ func Part2() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	ropes := [TailSize]Position{}
+	ropes := [TailSize]Coord{}
 	positions := map[string]bool{}
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
@@ -27,7 +27,7 @@ func Part2() {
 			continue
 		}
 		fields := strings.Fields(line)
-		delta := DirPosition(fields[0])
+		delta := ParseDirection(fields[0])
 		for steps, _ := strconv.Atoi(fields[1]); steps > 0; steps-- {
 			ropes[0] = ropes[0].Add(delta)
 			for r := 1; r < TailSize; r++ {
