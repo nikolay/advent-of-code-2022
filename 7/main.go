@@ -17,8 +17,8 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	dirs := map[string]uint64{}
-	pwd := []string{}
+	var dirs map[string]uint64
+	var pwd []string
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {

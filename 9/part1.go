@@ -40,7 +40,7 @@ func Part1() {
 		log.Fatal(err)
 	}
 	count := 0
-	for _ = range positions {
+	for range positions {
 		count++
 	}
 	fmt.Println(count)

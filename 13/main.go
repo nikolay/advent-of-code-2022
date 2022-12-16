@@ -85,7 +85,7 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	nodes := []Node{}
+	var nodes []Node
 	for row := 0; scanner.Scan(); row++ {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -111,7 +111,8 @@ func main() {
 	fmt.Println(sum)
 
 	// Part 2
-	divisors, indices := []Node{}, []int{}
+	var divisors []Node
+	var indices []int
 	for index, v := range []int{2, 6} {
 		divisors = append(divisors, Node{isDivider: true, list: []Node{{list: []Node{{hasValue: true, value: v}}}}})
 		indices = append(indices, index)

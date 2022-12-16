@@ -124,7 +124,7 @@ func GetInput(filename string) (result Input) {
 			continue
 		}
 		segments := strings.Split(line, " -> ")
-		path := []Coord{}
+		var path []Coord
 		for _, frag := range segments {
 			coords := strings.Split(frag, ",")
 			x, _ := strconv.ParseInt(strings.TrimSpace(coords[0]), 10, 32)

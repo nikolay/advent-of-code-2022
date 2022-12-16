@@ -30,7 +30,7 @@ func Wave(rows []string, starts []Coord, end Coord) int {
 		{0, -1},
 	}
 	height, width := len(rows), len(rows[0])
-	wave := [][]int{}
+	var wave [][]int
 	for row := 0; row < height; row++ {
 		r := make([]int, width)
 		for col := 0; col < width; col++ {
@@ -80,7 +80,7 @@ func main() {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	rows := []string{}
+	var rows []string
 	start, end := Coord{0, 0}, Coord{0, 0}
 	for row := 0; scanner.Scan(); row++ {
 		line := strings.TrimSpace(scanner.Text())

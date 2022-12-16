@@ -19,7 +19,7 @@ func Part2() {
 
 	scanner := bufio.NewScanner(file)
 	heap := map[int]string{}
-	keys := []string{}
+	var keys []string
 	keymap := map[string]int{}
 	for scanner.Scan() {
 		line := scanner.Text()

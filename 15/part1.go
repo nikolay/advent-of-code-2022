@@ -19,7 +19,7 @@ func Part1() {
 
 	scanner := bufio.NewScanner(file)
 	r := regexp.MustCompile(`^Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)$`)
-	pairs := []Pair{}
+	var pairs []Pair
 	minX, maxX := 0, 0
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
