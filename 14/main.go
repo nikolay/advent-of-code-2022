@@ -13,12 +13,6 @@ type Coord struct {
 	x, y int32
 }
 
-type Key uint64
-
-func (coord Coord) GetKey() Key {
-	return Key(uint64(coord.y)<<32 | uint64(coord.x))
-}
-
 func (coord Coord) Add(add Coord) Coord {
 	return Coord{coord.x + add.x, coord.y + add.y}
 }
@@ -45,17 +39,17 @@ const (
 	SAND          = 'o'
 )
 
-type Space map[Key]Content
+type Space map[Coord]Content
 
 func (space Space) Get(coord Coord) Content {
-	if v, ok := space[coord.GetKey()]; ok {
+	if v, ok := space[coord]; ok {
 		return v
 	}
 	return EMPTY
 }
 
-func (space Space) Put(coord Coord, content Content) {
-	space[coord.GetKey()] = content
+func (space Space) Set(coord Coord, content Content) {
+	space[coord] = content
 }
 
 type DropResult uint
@@ -67,12 +61,7 @@ const (
 )
 
 func Drop(space *Space, drop Coord, abyss, floor int32) DropResult {
-	moves := []Coord{
-		{0, +1},
-		{-1, +1},
-		{+1, +1},
-	}
-
+	moves := []Coord{{0, +1}, {-1, +1}, {+1, +1}}
 	pos := drop
 outer:
 	for {
@@ -91,7 +80,7 @@ outer:
 			return BLOCKED
 		}
 
-		space.Put(pos, SAND)
+		space.Set(pos, SAND)
 		return LANDED
 	}
 }
@@ -112,10 +101,10 @@ func (input *Input) GetSpace() (result Space) {
 				continue
 			}
 			for pos != segment {
-				result.Put(pos, ROCK)
+				result.Set(pos, ROCK)
 				pos = pos.Step(segment)
 			}
-			result.Put(pos, ROCK)
+			result.Set(pos, ROCK)
 		}
 	}
 	return
