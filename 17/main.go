@@ -8,64 +8,50 @@ import (
 	"strings"
 )
 
+const ChamberWidth = 7
+
 type Rock struct {
-	width, height int64
-	sprite        []byte
+	width, height int
+	sprite        []uint
 }
 
 type Key struct {
-	rock, jet int
+	rockType, jet int
 }
 
 type CacheEntry struct {
-	rockNumber, height int64
+	rockNumber, height int
 }
 
-func Solve(jets string, rocks []Rock, rocksToDrop int64) int64 {
-	var chamber []byte
+func Solve(jets string, rocks []Rock, rocksToDrop int) int {
+	var chamber []uint
 	cache := map[Key]CacheEntry{}
-	fallingRock := 0
+	rockType := 0
 	jet := 0
-	deletedRows := int64(0)
-	height := int64(0)
-	for rockNumber := int64(0); rockNumber < rocksToDrop; rockNumber++ {
-		rock := rocks[fallingRock]
+	height := 0
+	for rockNumber := 0; rockNumber < rocksToDrop; rockNumber++ {
+		rock := rocks[rockType]
 
-	height:
-		for height < int64(len(chamber)) {
-			switch chamber[height] {
-			case 0:
-				break height
-			case 0b1111111:
-				chamber = chamber[height+1:]
-				deletedRows += int64(height)
-				height = 0
-				continue
-			}
-			height++
-		}
-
-		actualHeight := deletedRows + height
-		cacheKey := Key{fallingRock, jet}
+		cacheKey := Key{rockType, jet}
 		if cacheEntry, ok := cache[cacheKey]; ok {
 			rockLeftToDrop := rocksToDrop - rockNumber
 			seriesLength := rockNumber - cacheEntry.rockNumber
 			if rockLeftToDrop%seriesLength == 0 {
-				return actualHeight + (actualHeight-cacheEntry.height)*rockLeftToDrop/seriesLength
+				return height + (height-cacheEntry.height)*rockLeftToDrop/seriesLength
 			}
 		}
-		cache[cacheKey] = CacheEntry{rockNumber, actualHeight}
+		cache[cacheKey] = CacheEntry{rockNumber, height}
 
-		rockX, rockY := int64(2), height+3+rock.height-1
-		for rockY >= int64(len(chamber)) {
-			chamber = append(chamber, 0b0000000)
+		rockX, rockY := 2, height+3+rock.height-1
+		for rockY >= len(chamber) {
+			chamber = append(chamber, 0)
 		}
 
 		ok := true
 		for ok {
 			ch := jets[jet]
 			jet = (jet + 1) % len(jets)
-			var deltaX, deltaY int64
+			var deltaX, deltaY int
 			switch ch {
 			case '<':
 				deltaX, deltaY = -1, 0
@@ -74,8 +60,8 @@ func Solve(jets string, rocks []Rock, rocksToDrop int64) int64 {
 			}
 
 			moveX, moveY := rockX+deltaX, rockY+deltaY
-			if moveY >= rock.height-1 && moveX >= 0 && moveX <= 7-rock.width {
-				for spriteY := int64(0); ok && spriteY < rock.height; spriteY++ {
+			if moveY >= rock.height-1 && moveX >= 0 && moveX <= ChamberWidth-rock.width {
+				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
 					bits := rock.sprite[spriteY] << moveX
 					if chamber[moveY-spriteY]^bits != chamber[moveY-spriteY]|bits {
 						ok = false
@@ -90,10 +76,10 @@ func Solve(jets string, rocks []Rock, rocksToDrop int64) int64 {
 
 			deltaX, deltaY = 0, -1
 			moveX, moveY = rockX+deltaX, rockY+deltaY
-			if moveY < rock.height-1 || moveX < 0 || moveX > 7-rock.width {
+			if moveY < rock.height-1 || moveX < 0 || moveX > ChamberWidth-rock.width {
 				ok = false
 			} else {
-				for spriteY := int64(0); ok && spriteY < rock.height; spriteY++ {
+				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
 					bits := rock.sprite[spriteY] << moveX
 					if chamber[moveY-spriteY]^bits != chamber[moveY-spriteY]|bits {
 						ok = false
@@ -105,17 +91,17 @@ func Solve(jets string, rocks []Rock, rocksToDrop int64) int64 {
 			}
 		}
 
-		for spriteY := int64(0); spriteY < rock.height; spriteY++ {
+		for spriteY := 0; spriteY < rock.height; spriteY++ {
 			chamber[rockY-spriteY] |= rock.sprite[spriteY] << rockX
 		}
 
-		fallingRock = (fallingRock + 1) % len(rocks)
-	}
+		for height < len(chamber) && chamber[height] != 0 {
+			height++
+		}
 
-	var y int64
-	for y = height; chamber[y] != 0; y++ {
+		rockType = (rockType + 1) % len(rocks)
 	}
-	return deletedRows + y
+	return height
 }
 
 func main() {
@@ -124,14 +110,14 @@ func main() {
 		{
 			4,
 			1,
-			[]byte{
+			[]uint{
 				0b1111,
 			},
 		},
 		{
 			3,
 			3,
-			[]byte{
+			[]uint{
 				0b010,
 				0b111,
 				0b010,
@@ -140,7 +126,7 @@ func main() {
 		{
 			3,
 			3,
-			[]byte{
+			[]uint{
 				0b100,
 				0b100,
 				0b111,
@@ -149,7 +135,7 @@ func main() {
 		{
 			1,
 			4,
-			[]byte{
+			[]uint{
 				0b1,
 				0b1,
 				0b1,
@@ -159,7 +145,7 @@ func main() {
 		{
 			2,
 			2,
-			[]byte{
+			[]uint{
 				0b11,
 				0b11,
 			},
