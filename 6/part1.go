@@ -2,13 +2,12 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
-func Part1() {
+func Part1() int {
 	const StreakSize = 4
 
 	file, err := os.Open("input.txt")
@@ -27,12 +26,13 @@ func Part1() {
 			if line[i] != line[i+1] && line[i] != line[i+2] && line[i] != line[i+3] &&
 				line[i+1] != line[i+2] && line[i+1] != line[i+3] &&
 				line[i+2] != line[i+3] {
-				fmt.Println(i + StreakSize)
-				break
+				return i + StreakSize
 			}
 		}
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	return Error
 }

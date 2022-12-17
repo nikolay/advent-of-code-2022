@@ -1,6 +1,10 @@
 package main
 
+import "fmt"
+
+const Error = -1
+
 func main() {
-	Part1()
-	Part2()
+	fmt.Println(Part1())
+	fmt.Println(Part2())
 }

@@ -12,14 +12,14 @@ type Coord struct {
 	row, col int
 }
 
-func Height(ch byte) int {
+func GetHeight(ch byte) int {
 	switch ch {
 	case 'S':
 		ch = 'a'
 	case 'E':
 		ch = 'z'
 	}
-	return int(ch) - int('a')
+	return int(ch - 'a')
 }
 
 func Wave(rows []string, starts []Coord, end Coord) int {
@@ -46,13 +46,13 @@ func Wave(rows []string, starts []Coord, end Coord) int {
 		found := false
 		for row := 0; row < height; row++ {
 			for col := 0; col < width; col++ {
-				h := Height(rows[row][col])
+				h := GetHeight(rows[row][col])
 				if wave[row][col] == step {
 					for _, move := range moves {
 						r := row + move.row
 						c := col + move.col
 						if r >= 0 && r < height && c >= 0 && c < width && wave[r][c] == -1 {
-							if Height(rows[r][c]) <= h+1 {
+							if GetHeight(rows[r][c]) <= h+1 {
 								wave[r][c] = step + 1
 								found = true
 							}
@@ -79,9 +79,10 @@ func main() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	var rows []string
 	start, end := Coord{0, 0}, Coord{0, 0}
+
+	scanner := bufio.NewScanner(file)
 	for row := 0; scanner.Scan(); row++ {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {

@@ -9,17 +9,18 @@ import (
 	"strings"
 )
 
-func Part1() {
+func Part1() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	head := Coord{0, 0}
 	tail := head
 	positions := map[string]bool{}
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -39,9 +40,10 @@ func Part1() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
 	count := 0
 	for range positions {
 		count++
 	}
-	fmt.Println(count)
+	return count
 }

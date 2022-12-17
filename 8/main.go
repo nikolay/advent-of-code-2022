@@ -16,8 +16,9 @@ func main() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	var rows [][]int
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -40,12 +41,12 @@ func main() {
 	for row := 1; row < height-1; row++ {
 		for col := 1; col < width-1; col++ {
 			h := rows[row][col]
-			vis := 4
+			views := 4
 			top := 0
 			for i := row - 1; i >= 0; i-- {
 				top++
 				if rows[i][col] >= h {
-					vis--
+					views--
 					break
 				}
 			}
@@ -53,7 +54,7 @@ func main() {
 			for i := row + 1; i < height; i++ {
 				bottom++
 				if rows[i][col] >= h {
-					vis--
+					views--
 					break
 				}
 			}
@@ -61,7 +62,7 @@ func main() {
 			for i := col - 1; i >= 0; i-- {
 				left++
 				if rows[row][i] >= h {
-					vis--
+					views--
 					break
 				}
 			}
@@ -69,11 +70,11 @@ func main() {
 			for i := col + 1; i < width; i++ {
 				right++
 				if rows[row][i] >= h {
-					vis--
+					views--
 					break
 				}
 			}
-			if vis > 0 {
+			if views > 0 {
 				solution1++
 			}
 			if score := top * bottom * left * right; score > solution2 {

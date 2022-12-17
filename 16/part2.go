@@ -1,17 +1,15 @@
 package main
 
-import "fmt"
-
 type State2 struct {
 	me         int
 	elephant   int
-	openValves uint64
+	openValves uint
 	pressure   int
 }
 
-type Key2 struct {
+type CacheKey2 struct {
 	low, high  int
-	openValves uint64
+	openValves uint
 }
 
 func Order(a, b int) (int, int) {
@@ -24,13 +22,12 @@ func Order(a, b int) (int, int) {
 func Part2(input *Input, time int) int {
 	index := input.FindValve("AA")
 	states := []State2{{me: index, elephant: index, openValves: 0, pressure: 0}}
-	best := map[Key2]int{}
+	best := map[CacheKey2]int{}
 	for t := 1; t < time; t++ {
-		fmt.Println(t, len(states))
 		var newStates []State2
 		for _, state := range states {
 			low, high := Order(state.me, state.elephant)
-			key := Key2{low, high, state.openValves}
+			key := CacheKey2{low, high, state.openValves}
 			if bestPressure, ok := best[key]; ok && state.pressure <= bestPressure {
 				continue
 			}
@@ -42,8 +39,8 @@ func Part2(input *Input, time int) int {
 			flowRate := me.flowRate
 			elephantFlowRate := elephant.flowRate
 
-			bitmask := uint64(1) << state.me
-			elephantBitmask := uint64(1) << state.elephant
+			bitmask := uint(1) << state.me
+			elephantBitmask := uint(1) << state.elephant
 
 			open := flowRate > 0 && state.openValves&bitmask == 0
 			elephantOpen := elephantFlowRate > 0 && state.openValves&elephantBitmask == 0

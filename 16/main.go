@@ -46,8 +46,9 @@ func GetInput(filename string) (result Input) {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	r := regexp.MustCompile(`^Valve ([A-Z]+) has flow rate=(\d+); tunnels? leads? to valves? (.+)+$`)
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {

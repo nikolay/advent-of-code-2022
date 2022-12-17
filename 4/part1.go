@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -10,16 +9,17 @@ import (
 	"strings"
 )
 
-func Part1() {
+func Part1() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	r := regexp.MustCompile(`^(\d+)-(\d+),(\d+)-(\d+)$`)
-	count := int64(0)
+	count := 0
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -40,5 +40,6 @@ func Part1() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(count)
+
+	return count
 }

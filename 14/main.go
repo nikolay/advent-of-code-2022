@@ -10,14 +10,14 @@ import (
 )
 
 type Coord struct {
-	x, y int32
+	x, y int
 }
 
 func (coord Coord) Add(add Coord) Coord {
 	return Coord{coord.x + add.x, coord.y + add.y}
 }
 
-func Sign(n int32) int32 {
+func Sign(n int) int {
 	if n < 0 {
 		return -1
 	}
@@ -52,7 +52,7 @@ func (space Space) Set(coord Coord, content Content) {
 	space[coord] = content
 }
 
-type DropResult uint
+type DropResult int
 
 const (
 	BLOCKED DropResult = iota
@@ -60,7 +60,7 @@ const (
 	LANDED
 )
 
-func Drop(space *Space, drop Coord, abyss, floor int32) DropResult {
+func Drop(space *Space, drop Coord, abyss, floor int) DropResult {
 	moves := []Coord{{0, +1}, {-1, +1}, {+1, +1}}
 	pos := drop
 outer:
@@ -87,7 +87,7 @@ outer:
 
 type Input struct {
 	paths [][]Coord
-	maxY  int32
+	maxY  int
 	drop  Coord
 }
 
@@ -127,9 +127,9 @@ func GetInput(filename string) (result Input) {
 		var path []Coord
 		for _, frag := range segments {
 			coords := strings.Split(frag, ",")
-			x, _ := strconv.ParseInt(strings.TrimSpace(coords[0]), 10, 32)
-			y, _ := strconv.ParseInt(strings.TrimSpace(coords[1]), 10, 32)
-			coord := Coord{int32(x), int32(y)}
+			x, _ := strconv.Atoi(strings.TrimSpace(coords[0]))
+			y, _ := strconv.Atoi(strings.TrimSpace(coords[1]))
+			coord := Coord{x, y}
 			if coord.y > result.maxY {
 				result.maxY = coord.y
 			}

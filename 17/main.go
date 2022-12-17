@@ -15,7 +15,7 @@ type Rock struct {
 	sprite        []uint
 }
 
-type Key struct {
+type CacheKey struct {
 	rockType, jet int
 }
 
@@ -24,15 +24,15 @@ type CacheEntry struct {
 }
 
 func Solve(jets string, rocks []Rock, rocksToDrop int) int {
-	var chamber []uint
-	cache := map[Key]CacheEntry{}
+	var cave []uint
+	cache := map[CacheKey]CacheEntry{}
 	rockType := 0
 	jet := 0
 	height := 0
 	for rockNumber := 0; rockNumber < rocksToDrop; rockNumber++ {
 		rock := rocks[rockType]
 
-		cacheKey := Key{rockType, jet}
+		cacheKey := CacheKey{rockType, jet}
 		if cacheEntry, ok := cache[cacheKey]; ok {
 			rockLeftToDrop := rocksToDrop - rockNumber
 			seriesLength := rockNumber - cacheEntry.rockNumber
@@ -43,8 +43,8 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 		cache[cacheKey] = CacheEntry{rockNumber, height}
 
 		rockX, rockY := 2, height+3+rock.height-1
-		for rockY >= len(chamber) {
-			chamber = append(chamber, 0)
+		for rockY >= len(cave) {
+			cave = append(cave, 0)
 		}
 
 		ok := true
@@ -63,7 +63,7 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 			if moveY >= rock.height-1 && moveX >= 0 && moveX <= ChamberWidth-rock.width {
 				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
 					bits := rock.sprite[spriteY] << moveX
-					if chamber[moveY-spriteY]^bits != chamber[moveY-spriteY]|bits {
+					if cave[moveY-spriteY]^bits != cave[moveY-spriteY]|bits {
 						ok = false
 					}
 				}
@@ -81,7 +81,7 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 			} else {
 				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
 					bits := rock.sprite[spriteY] << moveX
-					if chamber[moveY-spriteY]^bits != chamber[moveY-spriteY]|bits {
+					if cave[moveY-spriteY]^bits != cave[moveY-spriteY]|bits {
 						ok = false
 					}
 				}
@@ -92,10 +92,10 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 		}
 
 		for spriteY := 0; spriteY < rock.height; spriteY++ {
-			chamber[rockY-spriteY] |= rock.sprite[spriteY] << rockX
+			cave[rockY-spriteY] |= rock.sprite[spriteY] << rockX
 		}
 
-		for height < len(chamber) && chamber[height] != 0 {
+		for height < len(cave) && cave[height] != 0 {
 			height++
 		}
 

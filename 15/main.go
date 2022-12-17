@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Coord struct {
 	x, y int
 }
@@ -37,6 +39,6 @@ func Validate(candidate Coord, pairs *[]Pair) bool {
 }
 
 func main() {
-	Part1()
-	Part2()
+	fmt.Println(Part1())
+	fmt.Println(Part2())
 }

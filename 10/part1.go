@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -16,17 +15,18 @@ func Check(cycle *int, x int, sum *int) {
 	*cycle++
 }
 
-func Part1() {
+func Part1() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	x := 1
 	cycle := 1
 	sum := 0
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -46,5 +46,6 @@ func Part1() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(sum)
+
+	return sum
 }

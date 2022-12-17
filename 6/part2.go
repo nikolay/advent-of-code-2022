@@ -2,13 +2,12 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
-func Part2() {
+func Part2() int {
 	const StreakSize = 14
 
 	file, err := os.Open("input.txt")
@@ -32,11 +31,12 @@ func Part2() {
 					}
 				}
 			}
-			fmt.Println(i + StreakSize)
-			break
+			return i + StreakSize
 		}
 	}
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
+	return Error
 }

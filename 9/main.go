@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 type Coord struct {
 	x, y int
 }
@@ -33,8 +35,8 @@ func Sign(n int) int {
 	return 0
 }
 
-func ParseDirection(dir string) Coord {
-	switch dir {
+func ParseDirection(direction string) Coord {
+	switch direction {
 	case "L":
 		return Coord{-1, 0}
 	case "R":
@@ -48,6 +50,6 @@ func ParseDirection(dir string) Coord {
 }
 
 func main() {
-	Part1()
-	Part2()
+	fmt.Println(Part1())
+	fmt.Println(Part2())
 }

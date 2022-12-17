@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -10,17 +9,18 @@ import (
 	"strings"
 )
 
-func Part2() {
+func Part2() string {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	heap := map[int]string{}
 	var keys []string
 	keymap := map[string]int{}
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := scanner.Text()
 		if len(line) == 0 {
@@ -31,7 +31,7 @@ func Part2() {
 			buf = buf[3:]
 			if len(buf) > 0 {
 				if buf[0] != ' ' {
-					fmt.Errorf("invalid command: %v", line)
+					log.Fatalf("invalid command: %v", line)
 				}
 				buf = buf[1:]
 			}
@@ -51,7 +51,9 @@ func Part2() {
 			}
 		}
 	}
+
 	r := regexp.MustCompile(`^move (\d+) from (\d+) to (\d+)$`)
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -72,9 +74,10 @@ func Part2() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
 	result := ""
 	for _, key := range keys {
 		result += heap[keymap[key]][:1]
 	}
-	fmt.Println(result)
+	return result
 }

@@ -2,23 +2,23 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
 	"strings"
 )
 
-func Part1() {
+func Part1() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	r := regexp.MustCompile(`^([ABC]) ([XYZ])$`)
-	total := int64(0)
+	total := 0
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -29,7 +29,7 @@ func Part1() {
 			log.Fatalf("invalid command: %v", line)
 		}
 		abc, xyz := matches[1], matches[2]
-		score := int64(0)
+		score := 0
 		switch xyz {
 		case "X":
 			score += 1
@@ -50,5 +50,6 @@ func Part1() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(total)
+
+	return total
 }

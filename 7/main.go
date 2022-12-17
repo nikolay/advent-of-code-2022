@@ -16,9 +16,10 @@ func main() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	var dirs map[string]uint64
+	dirs := map[string]int{}
 	var pwd []string
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -40,7 +41,7 @@ func main() {
 				}
 			}
 		} else if fields[0] != "dir" {
-			filesize, _ := strconv.ParseUint(fields[0], 10, 64)
+			filesize, _ := strconv.Atoi(fields[0])
 			for n := len(pwd); n >= 0; n-- {
 				path := strings.Join(pwd[0:n], "/")
 				dirsize := filesize
@@ -55,7 +56,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	solution1 := uint64(0)
+	// Part 1
+	solution1 := 0
 	for path := range dirs {
 		dirsize := dirs[path]
 		if dirsize <= 100000 {
@@ -64,9 +66,10 @@ func main() {
 	}
 	fmt.Println(solution1)
 
+	// Part 2
 	used := dirs[""]
-	free := uint64(70000000) - used
-	solution2 := uint64(0)
+	free := 70000000 - used
+	solution2 := 0
 	for path := range dirs {
 		dirsize := dirs[path]
 		if free+dirsize >= 30000000 {

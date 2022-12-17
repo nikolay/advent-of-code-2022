@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func Part2() {
+func Part2() int {
 	const TailSize = 10
 
 	file, err := os.Open("input.txt")
@@ -18,9 +18,10 @@ func Part2() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	ropes := [TailSize]Coord{}
 	positions := map[string]bool{}
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -46,9 +47,10 @@ func Part2() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
 	count := 0
 	for range positions {
 		count++
 	}
-	fmt.Println(count)
+	return count
 }

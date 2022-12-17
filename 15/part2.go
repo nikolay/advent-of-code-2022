@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"regexp"
@@ -24,16 +23,17 @@ func Diamond(center Coord, size int) []Coord {
 	return result
 }
 
-func Part2() {
+func Part2() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	r := regexp.MustCompile(`^Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)$`)
 	var pairs []Pair
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -57,15 +57,13 @@ func Part2() {
 	}
 
 	distance := 0
-outer:
 	for {
 		distance++
 		for _, pair := range pairs {
 			for _, candidate := range Diamond(pair.sensor, pair.distance+distance) {
 				if candidate.x >= 0 && candidate.x <= 4000000 && candidate.y >= 0 && candidate.y <= 4000000 {
 					if Validate(candidate, &pairs) {
-						fmt.Println(candidate.x*4000000 + candidate.y)
-						break outer
+						return candidate.x*4000000 + candidate.y
 					}
 				}
 			}

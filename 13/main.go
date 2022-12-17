@@ -84,8 +84,9 @@ func main() {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	var nodes []Node
+
+	scanner := bufio.NewScanner(file)
 	for row := 0; scanner.Scan(); row++ {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {

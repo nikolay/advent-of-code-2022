@@ -2,25 +2,25 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 )
 
-func Part2() {
+func Part2() int {
 	file, err := os.Open("input.txt")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
-	calories := int64(0)
+	calories := 0
 	maxCalories1 := calories
 	maxCalories2 := calories
 	maxCalories3 := calories
+
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if len(line) == 0 {
@@ -37,7 +37,7 @@ func Part2() {
 			calories = 0
 			continue
 		}
-		if calorie, err := strconv.ParseInt(line, 10, 64); err != nil {
+		if calorie, err := strconv.Atoi(line); err != nil {
 			log.Fatal(err)
 		} else {
 			calories += calorie
@@ -46,6 +46,7 @@ func Part2() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
+
 	if calories > maxCalories1 {
 		maxCalories3 = maxCalories2
 		maxCalories2 = maxCalories1
@@ -56,5 +57,5 @@ func Part2() {
 	} else if calories > maxCalories3 {
 		maxCalories3 = calories
 	}
-	fmt.Println(maxCalories1 + maxCalories2 + maxCalories3)
+	return maxCalories1 + maxCalories2 + maxCalories3
 }

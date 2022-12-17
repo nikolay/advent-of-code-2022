@@ -2,13 +2,12 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
-func Part1() {
+func Part1() int {
 	const FullMask = 1<<2 - 1
 
 	file, err := os.Open("input.txt")
@@ -17,8 +16,9 @@ func Part1() {
 	}
 	defer file.Close()
 
+	score := 0
+
 	scanner := bufio.NewScanner(file)
-	score := uint64(0)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		l := len(line)
@@ -33,17 +33,17 @@ func Part1() {
 				bit <<= 1
 			}
 			c := line[i]
-			var code uint
+			var code int
 			if c >= 'a' && c <= 'z' {
-				code = uint(c - 'a')
+				code = int(c - 'a')
 			} else if c >= 'A' && c <= 'Z' {
-				code = Letters + uint(c-'A')
+				code = Letters + int(c-'A')
 			} else {
 				log.Fatalf("invalid character: '%c'", c)
 			}
 			bits[code] |= bit
 			if bits[code] == FullMask {
-				score += 1 + uint64(code)
+				score += 1 + code
 				break
 			}
 		}
@@ -51,5 +51,6 @@ func Part1() {
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(score)
+
+	return score
 }
