@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-const ChamberWidth = 7
+const CaveWidth = 7
 
 type Rock struct {
 	width, height int
@@ -60,7 +60,7 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 			}
 
 			moveX, moveY := rockX+deltaX, rockY+deltaY
-			if moveY >= rock.height-1 && moveX >= 0 && moveX <= ChamberWidth-rock.width {
+			if moveY >= rock.height-1 && moveX >= 0 && moveX <= CaveWidth-rock.width {
 				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
 					bits := rock.sprite[spriteY] << moveX
 					if cave[moveY-spriteY]^bits != cave[moveY-spriteY]|bits {
@@ -76,7 +76,7 @@ func Solve(jets string, rocks []Rock, rocksToDrop int) int {
 
 			deltaX, deltaY = 0, -1
 			moveX, moveY = rockX+deltaX, rockY+deltaY
-			if moveY < rock.height-1 || moveX < 0 || moveX > ChamberWidth-rock.width {
+			if moveY < rock.height-1 || moveX < 0 || moveX > CaveWidth-rock.width {
 				ok = false
 			} else {
 				for spriteY := 0; ok && spriteY < rock.height; spriteY++ {
