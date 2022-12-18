@@ -13,15 +13,47 @@ type Coord struct {
 	x, y, z int
 }
 
-func Adjacent(coord Coord) []Coord {
+func (coord Coord) Move(dx, dy, dz int) Coord {
+	return Coord{coord.x + dx, coord.y + dy, coord.z + dz}
+}
+
+func (coord Coord) Inside(min, max Coord) bool {
+	return coord.x >= min.x && coord.x <= max.x &&
+		coord.y >= min.y && coord.y <= max.y &&
+		coord.z >= min.z && coord.z <= max.z
+}
+
+func (coord Coord) Adjacent() []Coord {
 	return []Coord{
-		{coord.x - 1, coord.y, coord.z},
-		{coord.x + 1, coord.y, coord.z},
-		{coord.x, coord.y - 1, coord.z},
-		{coord.x, coord.y + 1, coord.z},
-		{coord.x, coord.y, coord.z - 1},
-		{coord.x, coord.y, coord.z + 1},
+		coord.Move(-1, 0, 0),
+		coord.Move(+1, 0, 0),
+		coord.Move(0, -1, 0),
+		coord.Move(0, +1, 0),
+		coord.Move(0, 0, -1),
+		coord.Move(0, 0, +1),
 	}
+}
+
+func (coord Coord) Min(min Coord) Coord {
+	return Coord{Min(coord.x, min.x), Min(coord.y, min.y), Min(coord.z, min.z)}
+}
+
+func (coord Coord) Max(min Coord) Coord {
+	return Coord{Max(coord.x, min.x), Max(coord.y, min.y), Max(coord.z, min.z)}
+}
+
+func Min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func Max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
 
 func Solve1(cubes []Coord) int {
@@ -32,7 +64,7 @@ func Solve1(cubes []Coord) int {
 	surface := 0
 	for _, coord := range cubes {
 		sides := 0
-		for _, adjacent := range Adjacent(coord) {
+		for _, adjacent := range coord.Adjacent() {
 			if _, ok := space[adjacent]; !ok {
 				sides++
 			}
@@ -48,39 +80,21 @@ func Solve2(cubes []Coord) int {
 	max := min
 	for _, coord := range cubes {
 		space[coord] = true
-
-		if coord.x < min.x {
-			min.x = coord.x
-		}
-		if coord.y < min.y {
-			min.y = coord.y
-		}
-		if coord.z < min.z {
-			min.z = coord.z
-		}
-
-		if coord.x > max.x {
-			max.x = coord.x
-		}
-		if coord.y > max.y {
-			max.y = coord.y
-		}
-		if coord.z > max.z {
-			max.z = coord.z
-		}
+		min = coord.Min(min)
+		max = coord.Max(max)
 	}
+	min = min.Move(-1, -1, -1)
+	max = max.Move(+1, +1, +1)
 
 	step := 1
-	water := map[Coord]int{Coord{min.x - 1, min.y - 1, min.z - 1}: step}
+	water := map[Coord]int{Coord{min.x, min.y, min.z}: step}
 	for {
 		found := false
 		batch := map[Coord]int{}
 		for coord, v := range water {
 			if v == step {
-				for _, adjacent := range Adjacent(coord) {
-					if adjacent.x >= min.x-1 && adjacent.x <= max.x+1 &&
-						adjacent.y >= min.y-1 && adjacent.y <= max.y+1 &&
-						adjacent.z >= min.z-1 && adjacent.z <= max.z+1 {
+				for _, adjacent := range coord.Adjacent() {
+					if adjacent.Inside(min, max) {
 						if _, ok := space[adjacent]; ok {
 							continue
 						}
@@ -107,7 +121,7 @@ func Solve2(cubes []Coord) int {
 	surface := 0
 	for _, coord := range cubes {
 		sides := 0
-		for _, adjacent := range Adjacent(coord) {
+		for _, adjacent := range coord.Adjacent() {
 			if _, ok := water[adjacent]; ok {
 				sides++
 			}
