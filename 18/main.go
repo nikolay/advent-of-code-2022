@@ -17,7 +17,7 @@ func (coord Coord) Move(dx, dy, dz int) Coord {
 	return Coord{coord.x + dx, coord.y + dy, coord.z + dz}
 }
 
-func (coord Coord) Inside(min, max Coord) bool {
+func (coord Coord) IsInside(min, max Coord) bool {
 	return coord.x >= min.x && coord.x <= max.x &&
 		coord.y >= min.y && coord.y <= max.y &&
 		coord.z >= min.z && coord.z <= max.z
@@ -34,14 +34,6 @@ func (coord Coord) Adjacent() []Coord {
 	}
 }
 
-func (coord Coord) Min(min Coord) Coord {
-	return Coord{Min(coord.x, min.x), Min(coord.y, min.y), Min(coord.z, min.z)}
-}
-
-func (coord Coord) Max(min Coord) Coord {
-	return Coord{Max(coord.x, min.x), Max(coord.y, min.y), Max(coord.z, min.z)}
-}
-
 func Min(a, b int) int {
 	if a < b {
 		return a
@@ -54,6 +46,14 @@ func Max(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func (coord Coord) Min(min Coord) Coord {
+	return Coord{Min(coord.x, min.x), Min(coord.y, min.y), Min(coord.z, min.z)}
+}
+
+func (coord Coord) Max(min Coord) Coord {
+	return Coord{Max(coord.x, min.x), Max(coord.y, min.y), Max(coord.z, min.z)}
 }
 
 func Solve1(cubes []Coord) int {
@@ -94,7 +94,7 @@ func Solve2(cubes []Coord) int {
 		for coord, v := range water {
 			if v == step {
 				for _, adjacent := range coord.Adjacent() {
-					if adjacent.Inside(min, max) {
+					if adjacent.IsInside(min, max) {
 						if _, ok := space[adjacent]; ok {
 							continue
 						}
