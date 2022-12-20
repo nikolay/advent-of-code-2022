@@ -28,13 +28,13 @@ func Mix(numbers []int, decryptionKey int, iterations int) int {
 	for n := 0; n < iterations; n++ {
 		for i := 0; i < count; i++ {
 			oldPos := -1
-			for j := 0; j < count; j++ {
-				if indices[j] == i {
-					oldPos = j
+			for pos := 0; pos < count; pos++ {
+				if indices[pos] == i {
+					oldPos = pos
 					break
 				}
 			}
-			newPos := Modulus(oldPos + decryptedNumbers[i], count-1)
+			newPos := Modulus(oldPos+decryptedNumbers[i], count-1)
 
 			slice := append(indices[:oldPos], indices[oldPos+1:]...)
 			mixed := make([]int, newPos+1, count)
@@ -47,11 +47,11 @@ func Mix(numbers []int, decryptionKey int, iterations int) int {
 	}
 	for i := 0; i < count; i++ {
 		if decryptedNumbers[i] == 0 {
-			for j := 0; j < count; j++ {
-				if indices[j] == i {
+			for pos := 0; pos < count; pos++ {
+				if indices[pos] == i {
 					sum := 0
-					for _, k := range []int{1000, 2000, 3000} {
-						sum += decryptedNumbers[indices[Modulus(j+k, count)]]
+					for _, offset := range []int{1000, 2000, 3000} {
+						sum += decryptedNumbers[indices[Modulus(pos+offset, count)]]
 					}
 					return sum
 				}
