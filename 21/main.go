@@ -12,7 +12,7 @@ import (
 type Operator int
 
 const (
-	Literal Operator = iota
+	Nop Operator = iota
 	Add
 	Subtract
 	Multiply
@@ -30,18 +30,18 @@ func ParseOperator(op string) (Operator, error) {
 	case "/":
 		return Divide, nil
 	}
-	return Literal, fmt.Errorf("invalid operator: %v", op)
+	return Nop, fmt.Errorf("invalid operator: %v", op)
 }
 
 type Side struct {
-	isLiteral bool
-	literal   int
-	monkey    string
+	yelled bool
+	number int
+	monkey string
 }
 
 func ParseSide(side string) Side {
-	if literal, err := strconv.Atoi(side); err == nil {
-		return Side{true, literal, ""}
+	if number, err := strconv.Atoi(side); err == nil {
+		return Side{true, number, ""}
 	}
 	return Side{false, 0, side}
 }
@@ -52,133 +52,135 @@ type Monkey struct {
 	left, right Side
 }
 
-func Compute(values *map[string]Monkey) (bool, int) {
+func Compute(state *map[string]Monkey) (bool, int) {
 	for {
-		var deleteMonkeys []string
-		for yellingMonkeyName, yellingMonkey := range *values {
-			if yellingMonkey.op == Literal {
-				for waitingMonkeyName, waitingMonkey := range *values {
-					if waitingMonkey.op != Literal {
-						if !waitingMonkey.left.isLiteral && waitingMonkey.left.monkey == yellingMonkeyName {
+		var monkeysToRetire []string
+		for yellingMonkeyName, yellingMonkey := range *state {
+			if yellingMonkey.op == Nop {
+				for waitingMonkeyName, waitingMonkey := range *state {
+					if waitingMonkey.op != Nop {
+						if !waitingMonkey.left.yelled && waitingMonkey.left.monkey == yellingMonkeyName {
 							waitingMonkey.left = yellingMonkey.left
 						}
-						if !waitingMonkey.right.isLiteral && waitingMonkey.right.monkey == yellingMonkeyName {
+						if !waitingMonkey.right.yelled && waitingMonkey.right.monkey == yellingMonkeyName {
 							waitingMonkey.right = yellingMonkey.left
 						}
-						if waitingMonkey.left.isLiteral && waitingMonkey.right.isLiteral {
-							var literal int
+						if waitingMonkey.left.yelled && waitingMonkey.right.yelled {
+							var number int
 							switch waitingMonkey.op {
 							case Add:
-								literal = waitingMonkey.left.literal + waitingMonkey.right.literal
+								number = waitingMonkey.left.number + waitingMonkey.right.number
 							case Subtract:
-								literal = waitingMonkey.left.literal - waitingMonkey.right.literal
+								number = waitingMonkey.left.number - waitingMonkey.right.number
 							case Multiply:
-								literal = waitingMonkey.left.literal * waitingMonkey.right.literal
+								number = waitingMonkey.left.number * waitingMonkey.right.number
 							case Divide:
-								literal = waitingMonkey.left.literal / waitingMonkey.right.literal
+								number = waitingMonkey.left.number / waitingMonkey.right.number
 							}
 							if waitingMonkeyName == "root" {
-								return true, literal
+								return true, number
 							}
-							waitingMonkey.op = Literal
-							waitingMonkey.left = Side{true, literal, ""}
+							waitingMonkey.op = Nop
+							waitingMonkey.left = Side{true, number, ""}
 							waitingMonkey.right = Side{}
 						}
-						(*values)[waitingMonkeyName] = waitingMonkey
+						(*state)[waitingMonkeyName] = waitingMonkey
 					}
 				}
-				deleteMonkeys = append(deleteMonkeys, yellingMonkeyName)
+				monkeysToRetire = append(monkeysToRetire, yellingMonkeyName)
 			}
 		}
-		if len(deleteMonkeys) == 0 {
+		if len(monkeysToRetire) == 0 {
 			break
 		}
-		for _, name := range deleteMonkeys {
-			delete(*values, name)
+		for _, monkeyName := range monkeysToRetire {
+			delete(*state, monkeyName)
 		}
 	}
 	return false, 0
 }
 
 func Solve1(monkeys map[string]Monkey) int {
-	values := map[string]Monkey{}
-	for name, monkey := range monkeys {
-		values[name] = monkey
+	state := map[string]Monkey{}
+	for monkeyName, monkey := range monkeys {
+		state[monkeyName] = monkey
 	}
-	found, result := Compute(&values)
-	if !found {
-		log.Fatalf("no value for root found")
+	rootYelled, rootNumber := Compute(&state)
+	if !rootYelled {
+		log.Fatalf("root couldn't yell a number")
 	}
-	return result
+	return rootNumber
 }
 
 func Solve2(monkeys map[string]Monkey) int {
-	values := map[string]Monkey{}
-	for name, monkey := range monkeys {
-		if name == "humn" || name == "root" {
+	state := map[string]Monkey{}
+	for monkeyName, monkey := range monkeys {
+		if monkeyName == "humn" || monkeyName == "root" {
 			continue
 		}
-		values[name] = monkey
+		state[monkeyName] = monkey
 	}
 
 	root, _ := monkeys["root"]
-	values["root"] = Monkey{"root", Subtract, root.left, root.right}
+	state["root"] = Monkey{"root", Subtract, root.left, root.right}
 
-	Compute(&values)
+	Compute(&state)
 
-	inferred := map[string]int{}
+	inferredNumbers := map[string]int{}
 
-	root = values["root"]
-	if root.left.isLiteral {
-		inferred[root.right.monkey] = root.left.literal
-	} else if root.right.isLiteral {
-		inferred[root.left.monkey] = root.right.literal
+	root = state["root"]
+	if root.left.yelled {
+		inferredNumbers[root.right.monkey] = root.left.number
+	} else if root.right.yelled {
+		inferredNumbers[root.left.monkey] = root.right.number
 	} else {
 		log.Fatalf("could not find a solution")
 	}
 
 	for {
-		any := false
-		for name, value := range inferred {
-			monkey := values[name]
-			var reversedValue int
-			if monkey.left.isLiteral {
+		newInferredNumbers := map[string]int{}
+		found := 0
+		for monkeyName, number := range inferredNumbers {
+			monkey := state[monkeyName]
+			var inferredNUmber int
+			if monkey.left.yelled {
 				switch monkey.op {
 				case Add:
-					reversedValue = value - monkey.left.literal
+					inferredNUmber = number - monkey.left.number
 				case Subtract:
-					reversedValue = monkey.left.literal - value
+					inferredNUmber = monkey.left.number - number
 				case Multiply:
-					reversedValue = value / monkey.left.literal
+					inferredNUmber = number / monkey.left.number
 				case Divide:
-					reversedValue = monkey.left.literal / value
+					inferredNUmber = monkey.left.number / number
 				}
 				if monkey.right.monkey == "humn" {
-					return reversedValue
+					return inferredNUmber
 				}
-				inferred[monkey.right.monkey] = reversedValue
-				any = true
-			} else if monkey.right.isLiteral {
+				newInferredNumbers[monkey.right.monkey] = inferredNUmber
+				found++
+			} else if monkey.right.yelled {
 				switch monkey.op {
 				case Add:
-					reversedValue = value - monkey.right.literal
+					inferredNUmber = number - monkey.right.number
 				case Subtract:
-					reversedValue = monkey.right.literal + value
+					inferredNUmber = monkey.right.number + number
 				case Multiply:
-					reversedValue = value / monkey.right.literal
+					inferredNUmber = number / monkey.right.number
 				case Divide:
-					reversedValue = monkey.right.literal * value
+					inferredNUmber = monkey.right.number * number
 				}
 				if monkey.left.monkey == "humn" {
-					return reversedValue
+					return inferredNUmber
 				}
-				inferred[monkey.left.monkey] = reversedValue
-				any = true
+				newInferredNumbers[monkey.left.monkey] = inferredNUmber
+				found++
 			}
 		}
-		if !any {
+		if found == 0 {
 			break
 		}
+		inferredNumbers = newInferredNumbers
 	}
 
 	return -1
@@ -206,7 +208,7 @@ func main() {
 
 		var monkey Monkey
 		if len(expr) == 1 {
-			monkey = Monkey{name, Literal, ParseSide(expr[0]), Side{}}
+			monkey = Monkey{name, Nop, ParseSide(expr[0]), Side{}}
 		} else {
 			op, err := ParseOperator(expr[1])
 			if err != nil {
