@@ -33,6 +33,16 @@ type State struct {
 	collected Resources
 }
 
+func Sign(n int) int {
+	if n < 0 {
+		return -1
+	}
+	if n > 0 {
+		return 1
+	}
+	return 0
+}
+
 func Min(a, b int) int {
 	if a < b {
 		return a
@@ -77,17 +87,17 @@ func (resources *Resources) CanAfford(costs Resources) bool {
 		resources.geode >= costs.geode
 }
 
-func (state State) CompareFitness(champion State) bool {
+func (state *State) CompareFitness(champion State) int {
 	weights := Resources{
 		1,
 		16,
 		256,
 		1024,
 	}
-	return (state.collected.ore-champion.collected.ore)*weights.ore+
-		(state.collected.clay-champion.collected.clay)*weights.clay+
-		(state.collected.obsidian-champion.collected.obsidian)*weights.obsidian+
-		(state.collected.geode-champion.collected.geode)*weights.geode < 0
+	return Sign((state.collected.ore-champion.collected.ore)*weights.ore +
+		(state.collected.clay-champion.collected.clay)*weights.clay +
+		(state.collected.obsidian-champion.collected.obsidian)*weights.obsidian +
+		(state.collected.geode-champion.collected.geode)*weights.geode)
 }
 
 func (states States) Len() int {
@@ -95,7 +105,7 @@ func (states States) Len() int {
 }
 
 func (states States) Less(i, j int) bool {
-	return states[i].CompareFitness(states[j])
+	return states[i].CompareFitness(states[j]) < 0
 }
 
 func (states States) Swap(i, j int) {
@@ -129,6 +139,7 @@ func Solve(blueprint Blueprint, time int, maxStates int) int {
 		sort.Sort(sort.Reverse(newStates))
 		states = newStates[:Min(maxStates, len(newStates))]
 	}
+
 	maxGeodes := 0
 	for _, state := range states {
 		maxGeodes = Max(state.collected.geode, maxGeodes)
@@ -136,12 +147,11 @@ func Solve(blueprint Blueprint, time int, maxStates int) int {
 	return maxGeodes
 }
 
-func Solve1(blueprints []Blueprint) int {
-	result := 0
+func Solve1(blueprints []Blueprint) (result int) {
 	for _, blueprint := range blueprints {
 		result += blueprint.id * Solve(blueprint, 24, 1024)
 	}
-	return result
+	return
 }
 
 func Solve2(blueprints []Blueprint) int {
