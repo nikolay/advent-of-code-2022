@@ -183,20 +183,19 @@ func main() {
 
 		colon := strings.Index(line, ":")
 		fields := strings.Fields(line[:colon])
-		id, _ := strconv.Atoi(strings.TrimSpace(fields[1]))
+		id, _ := strconv.Atoi(fields[1])
 		blueprint := Blueprint{id, []Bot{}}
 
 		fields = strings.Split(strings.TrimSpace(line[colon+1:]), ".")
 		for _, field := range fields {
-			f := strings.TrimSpace(field)
-			if len(f) > 0 {
+			if len(field) > 0 {
 				bot := Bot{Resources{}, Resources{}}
 
-				matches := r2.FindStringSubmatch(f)
+				matches := r2.FindStringSubmatch(field)
 				if len(matches) == 0 {
-					matches = r1.FindStringSubmatch(f)
+					matches = r1.FindStringSubmatch(field)
 					if len(matches) == 0 {
-						log.Fatalf("invalid comamnd: %v", f)
+						log.Fatalf("invalid comamnd: %v", field)
 					}
 				} else {
 					cost, _ := strconv.Atoi(matches[4])
