@@ -55,17 +55,13 @@ func (valley *Valley) MoveBlizzards() {
 		pos := blizzard.coord
 		for {
 			pos = pos.Move(blizzard.dir)
-			for pos.x < 0 {
-				pos.x += valley.width
+			for ; pos.x < 0; pos.x += valley.width {
 			}
-			for pos.x >= valley.width {
-				pos.x -= valley.width
+			for ; pos.x >= valley.width; pos.x -= valley.width {
 			}
-			for pos.y < 0 {
-				pos.y += valley.height
+			for ; pos.y < 0; pos.y += valley.height {
 			}
-			for pos.y >= valley.height {
-				pos.y -= valley.height
+			for ; pos.y >= valley.height; pos.y -= valley.height {
 			}
 			if v, ok := valley.walls[pos]; !(ok && v) {
 				break
